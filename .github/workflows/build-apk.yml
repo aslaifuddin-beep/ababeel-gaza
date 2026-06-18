@@ -27,8 +27,8 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
-          api-level: 34
-          build-tools: 34.0.0
+          api-level: 35
+          build-tools: 35.0.0
           ndk-version: none
 
       - name: Install Cordova
@@ -44,7 +44,7 @@ jobs:
       - name: Add Android platform & plugins
         run: |
           cd app
-          cordova platform add android
+          cordova platform add android@13
           cordova plugin add cordova-plugin-bluetooth-serial || true
 
       - name: Build APK

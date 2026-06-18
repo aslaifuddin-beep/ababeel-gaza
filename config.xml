@@ -14,7 +14,7 @@
     <preference name="SplashScreenDelay" value="0" />
     <preference name="AutoHideSplashScreen" value="true" />
     <preference name="android-minSdkVersion" value="24" />
-    <preference name="android-targetSdkVersion" value="34" />
+    <preference name="android-targetSdkVersion" value="35" />
     <preference name="AndroidXEnabled" value="true" />
     <preference name="HardwareAcceleration" value="true" />
     <preference name="IgnoreSslCertificateError" value="true" />
