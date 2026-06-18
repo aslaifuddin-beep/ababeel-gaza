@@ -875,6 +875,8 @@
     }
 
     function resetGame() {
+        isPaused = false;
+        document.getElementById('pauseOverlay').classList.remove('visible');
         applyPlayerConfig(playerConfig);
         player.x = gameWidth / 2;
         player.y = gameHeight + 80;
@@ -953,6 +955,8 @@
     }
 
     function backToMenu() {
+        isPaused = false;
+        document.getElementById('pauseOverlay').classList.remove('visible');
         gameState = 'menu';
         userControlEnabled = false;
         cinematicState = null;
@@ -1087,6 +1091,27 @@
             mpPlayer2.health = parseFloat(vals[6]) || 100;
             mpPlayer2.score = parseInt(vals[7]) || 0;
             mpPlayer2.afterburner = parseFloat(vals[8]) || 0;
+        } else if (prefix === 'b' && vals.length >= 4) {
+            // Incoming bullet from opponent - create enemy bullet
+            const eb = acquireEnemyBullet();
+            eb.x = parseFloat(vals[0]);
+            eb.y = parseFloat(vals[1]);
+            eb.vx = parseFloat(vals[2]);
+            eb.vy = parseFloat(vals[3]);
+            eb.color = '#ff4444';
+            eb.type = 'energyOrb';
+            eb.size = 3;
+            eb.life = 1.5;
+        } else if (prefix === 'dmg' && vals.length >= 1) {
+            // Opponent confirms hit on us - reduce local player's health
+            player.health = Math.max(0, player.health - (parseFloat(vals[0]) || 10));
+            addScreenShake(6);
+            createParticles(player.x, player.y, '#ff4444', 6);
+            audio.play('playerHit', 0.45);
+            if (player.health <= 0) {
+                player.health = 0;
+                gameOver();
+            }
         }
     }
 
@@ -1164,8 +1189,20 @@
         mpHealth2.style.width = Math.max(0, h2) + '%';
     }
 
+    // ==================== PAUSE ====================
+    let isPaused = false;
+
+    function togglePause() {
+        if (gameState === 'playing' || gameState === 'mpBattle') {
+            isPaused = !isPaused;
+            document.getElementById('pauseOverlay').classList.toggle('visible', isPaused);
+        }
+    }
+
     // ==================== UPDATE ====================
     function update(dt) {
+        if (isPaused) return;
+
         // Cinematic
         if (cinematicState) {
             cinematicTimer += dt;
@@ -1514,6 +1551,68 @@
             if (player.fireTimer <= 0) {
                 fireMPBullet();
                 player.fireTimer = player.fireInterval || 0.12;
+            }
+        }
+
+        // ====== MP COMBAT ======
+        // Player bullets hitting opponent
+        if (mpPlayer2) {
+            for (let i = activeBullets.length - 1; i >= 0; i--) {
+                const b = activeBullets[i];
+                b.x += b.vx * dt;
+                b.y += b.vy * dt;
+                b.trail.push({ x: b.x, y: b.y, life: 1 });
+                if (b.trail.length > 4) b.trail.shift();
+                b.trail.forEach(t => t.life -= 3 * dt);
+                b.life -= dt;
+                if (b.life <= 0 || b.x < -30 || b.x > gameWidth + 30 || b.y < -30 || b.y > gameHeight + 30) {
+                    bulletPool.release(b);
+                    activeBullets.splice(i, 1);
+                    continue;
+                }
+                if (Math.hypot(b.x - mpPlayer2.x, b.y - mpPlayer2.y) < player.width / 2 + 4) {
+                    mpPlayer2.health -= b.dmg;
+                    score += 10;
+                    createParticles(b.x, b.y, '#ff4444', 4);
+                    audio.play('hit', 0.25);
+                    sendBTData('dmg:' + b.dmg);
+                    bulletPool.release(b);
+                    activeBullets.splice(i, 1);
+                    if (mpPlayer2.health <= 0) {
+                        mpPlayer2.health = 0;
+                        score += 500;
+                        createExplosion(mpPlayer2.x, mpPlayer2.y, 40, '#ff4444');
+                        addFloatingText(mpPlayer2.x, mpPlayer2.y - 20, '+500', '#ffd700');
+                    }
+                }
+            }
+        }
+
+        // Enemy bullets (from opponent) hitting local player
+        if (player.invincible > 0) player.invincible -= dt;
+        for (let i = activeEnemyBullets.length - 1; i >= 0; i--) {
+            const eb = activeEnemyBullets[i];
+            eb.x += eb.vx * dt;
+            eb.y += eb.vy * dt;
+            eb.life -= dt;
+            if (eb.life <= 0 || eb.x < -30 || eb.x > gameWidth + 30 || eb.y < -30 || eb.y > gameHeight + 30) {
+                enemyBulletPool.release(eb);
+                activeEnemyBullets.splice(i, 1);
+                continue;
+            }
+            if (player.invincible <= 0 && Math.hypot(eb.x - player.x, eb.y - player.y) < player.width / 2 + 3) {
+                player.health -= 10;
+                player.invincible = 1.2;
+                addScreenShake(8);
+                createParticles(player.x, player.y, '#ff4444', 10);
+                audio.play('playerHit', 0.55);
+                enemyBulletPool.release(eb);
+                activeEnemyBullets.splice(i, 1);
+                if (player.health <= 0) {
+                    player.health = 0;
+                    gameOver();
+                    return;
+                }
             }
         }
 
@@ -1880,7 +1979,6 @@
         ctx.rotate(p.roll || -Math.PI / 2);
         const pw = playerConfig.width;
         const ph = playerConfig.height;
-        ep = playerConfig;
         if (isEnemy) {
             ctx.globalAlpha = 0.85;
         }
@@ -2066,6 +2164,21 @@
         audio.init(); if (player.missileTimer <= 0 && missileCount > 0 && userControlEnabled && !cinematicState && !mpMode) { fireMissile();
             player.missileTimer = 1.2; } });
 
+    // ==================== PAUSE ====================
+    document.getElementById('pauseBtn').addEventListener('click', togglePause);
+    document.getElementById('btnResume').addEventListener('click', togglePause);
+    document.getElementById('btnPauseRestart').addEventListener('click', function() { isPaused = false;
+        document.getElementById('pauseOverlay').classList.remove('visible');
+        resetGame(); });
+    document.getElementById('btnPauseMenu').addEventListener('click', function() { isPaused = false;
+        document.getElementById('pauseOverlay').classList.remove('visible');
+        backToMenu(); });
+    window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') {
+            if (gameState === 'playing' || gameState === 'mpBattle') togglePause();
+        }
+    });
+
     // ==================== UI BINDINGS ====================
     $('btnStart').addEventListener('click', resetGame);
     $('btnStart').addEventListener('touchend', e => { e.preventDefault();
@@ -2111,6 +2224,4 @@
     lastTime = performance.now();
     requestAnimationFrame(gameLoop);
 
-    console.log('✈️ أبابيل غزة V2.0 | Multiplayer Edition');
-    console.log('🛠️ تطوير: محمود المصري (أبو صلاح)');
 })();
