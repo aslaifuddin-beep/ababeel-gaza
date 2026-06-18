@@ -52,9 +52,14 @@ jobs:
           cd app
           cordova build android --no-telemetry
 
+      - name: Locate and Upload APK
+        run: |
+          find . -name "app-debug.apk" -type f 2>/dev/null | head -5
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: ababeel-gaza-apk
-          path: app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          path: "**/app-debug.apk"
+          if-no-files-found: error
           compression-level: 0
