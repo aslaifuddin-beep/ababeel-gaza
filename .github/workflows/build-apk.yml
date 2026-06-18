@@ -31,19 +31,21 @@ jobs:
           build-tools: 34.0.0
           ndk-version: none
 
-      - name: Install Cordova & plugins
-        run: |
-          npm install -g cordova
-          cordova create app com.abusalah.ababeel "أبابيل غزة"
-          cd app
-          cordova platform add android
-          cordova plugin add cordova-plugin-bluetooth-serial || true
+      - name: Install Cordova
+        run: npm install -g cordova
 
-      - name: Inject game files
+      - name: Create project with custom config
         run: |
+          cordova create app com.abusalah.ababeel "أبابيل غزة"
           rm -rf app/www/*
           cp -r www/* app/www/
           cp config.xml app/config.xml
+
+      - name: Add Android platform & plugins
+        run: |
+          cd app
+          cordova platform add android
+          cordova plugin add cordova-plugin-bluetooth-serial || true
 
       - name: Build APK
         run: |
