@@ -2109,7 +2109,7 @@
         const r = jb.getBoundingClientRect();
         const jcx = r.left + r.width / 2;
         const jcy = r.top + r.height / 2;
-        const maxR = r.width / 2 - 22;
+        const maxR = r.width / 2 - 38;
         let dx = cx - jcx;
         let dy = cy - jcy;
         const dist = Math.hypot(dx, dy);
@@ -2148,20 +2148,22 @@
     const fb = document.getElementById('fireButton');
     fb.addEventListener('touchstart', e => { e.preventDefault();
         audio.init();
-        firePressed = true; });
+        firePressed = true;
+        try { navigator.vibrate && navigator.vibrate(12); } catch (ex) {} });
     fb.addEventListener('touchend', () => { firePressed = false; });
     fb.addEventListener('mousedown', e => { e.preventDefault();
         audio.init();
-        firePressed = true; });
+        firePressed = true;
+        try { navigator.vibrate && navigator.vibrate(12); } catch (ex) {} });
     fb.addEventListener('mouseup', () => { firePressed = false; });
     fb.addEventListener('mouseleave', () => { firePressed = false; });
 
     const mb = document.getElementById('missileButton');
     mb.addEventListener('touchstart', e => { e.preventDefault();
-        audio.init(); if (player.missileTimer <= 0 && missileCount > 0 && userControlEnabled && !cinematicState && !mpMode) { fireMissile();
+        audio.init(); try { navigator.vibrate && navigator.vibrate(10); } catch (ex) {} if (player.missileTimer <= 0 && missileCount > 0 && userControlEnabled && !cinematicState && !mpMode) { fireMissile();
             player.missileTimer = 1.2; } });
     mb.addEventListener('mousedown', e => { e.preventDefault();
-        audio.init(); if (player.missileTimer <= 0 && missileCount > 0 && userControlEnabled && !cinematicState && !mpMode) { fireMissile();
+        audio.init(); try { navigator.vibrate && navigator.vibrate(10); } catch (ex) {} if (player.missileTimer <= 0 && missileCount > 0 && userControlEnabled && !cinematicState && !mpMode) { fireMissile();
             player.missileTimer = 1.2; } });
 
     // ==================== PAUSE ====================

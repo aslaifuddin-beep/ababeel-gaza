@@ -50,18 +50,20 @@ canvas{display:block;width:100%;height:100%;position:absolute;top:0;left:0}
 #victoryQuote.show{transform:translate(-50%,-50%) scale(1)}
 .quote-text{font-size:clamp(16px,3vw,22px);font-weight:900;color:#fff;text-shadow:0 0 25px rgba(255,215,0,.9),0 0 50px rgba(255,150,0,.5);letter-spacing:2px;line-height:1.5}
 
-/* Controls (LANDSCAPE optimized) */
-#controls{position:absolute;bottom:8px;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;padding:0 10px;pointer-events:none;z-index:20}
-.joystick-zone{width:clamp(100px,18vw,150px);height:clamp(100px,18vw,150px);position:relative;pointer-events:auto}
-#joystickBase{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,rgba(0,180,255,.12),rgba(0,60,180,.2));border:3px solid rgba(0,200,255,.35);position:relative}
-#joystickThumb{width:clamp(42px,8vw,56px);height:clamp(42px,8vw,56px);border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(200,240,255,.7),rgba(0,140,255,.4));position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 25px rgba(0,180,255,.5);border:3px solid rgba(255,255,255,.5);transition:box-shadow .15s}
-#joystickThumb.active{box-shadow:0 0 40px rgba(0,220,255,.9)}
-.fire-zone{display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:auto}
-#fireButton{width:clamp(64px,12vw,80px);height:clamp(64px,12vw,80px);border-radius:50%;background:radial-gradient(circle at 35% 25%,#ff5555,#cc0000 70%,#770000);border:4px solid #ff4444;color:#fff;font-weight:900;font-size:clamp(10px,2vw,13px);cursor:pointer;box-shadow:0 6px 25px rgba(255,0,0,.5);display:flex;align-items:center;justify-content:center;text-align:center;transition:transform .06s;touch-action:manipulation}
-#fireButton:active{transform:scale(.85)}
-#missileButton{width:clamp(48px,9vw,60px);height:clamp(48px,9vw,60px);border-radius:50%;background:radial-gradient(circle at 35% 25%,#ff9900,#cc5500 70%,#662200);border:3px solid #ff7700;color:#fff;font-weight:900;font-size:clamp(8px,1.6vw,11px);cursor:pointer;box-shadow:0 4px 18px rgba(255,140,0,.5);display:flex;align-items:center;justify-content:center;text-align:center;transition:transform .06s;touch-action:manipulation}
-#missileButton:active{transform:scale(.85)}
-.missile-count{color:#ffaa00;font-size:clamp(10px,1.8vw,13px);font-weight:700;background:rgba(0,0,0,.7);padding:2px 10px;border-radius:14px;border:1px solid rgba(255,150,0,.4);pointer-events:none;white-space:nowrap}
+/* Controls (LANDSCAPE optimized) - UPGRADED */
+#controls{position:absolute;bottom:clamp(12px,2.5vh,24px);left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;padding:0 clamp(12px,3vw,28px);pointer-events:none;z-index:20}
+.joystick-zone{width:clamp(135px,24vw,200px);height:clamp(135px,24vw,200px);position:relative;pointer-events:auto;touch-action:none}
+#joystickBase{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,rgba(0,180,255,.15),rgba(0,60,180,.25));border:3px solid rgba(0,200,255,.4);position:relative;box-shadow:0 0 30px rgba(0,150,255,.15),inset 0 0 40px rgba(0,100,255,.08);transition:box-shadow .2s}
+#joystickThumb{width:clamp(54px,10vw,72px);height:clamp(54px,10vw,72px);border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(200,240,255,.8),rgba(0,140,255,.5));position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 35px rgba(0,180,255,.6);border:3px solid rgba(255,255,255,.6);transition:box-shadow .12s,transform .06s}
+#joystickThumb.active{box-shadow:0 0 55px rgba(0,220,255,1),0 0 80px rgba(0,150,255,.4);transform:translate(-50%,-50%) scale(1.04)}
+.fire-zone{display:flex;flex-direction:column;gap:clamp(8px,1.5vh,14px);align-items:center;pointer-events:auto}
+#fireButton{width:clamp(83px,15vw,104px);height:clamp(83px,15vw,104px);border-radius:50%;background:radial-gradient(circle at 35% 25%,#ff6666,#cc0000 65%,#770000);border:4px solid #ff4444;color:#fff;font-weight:900;font-size:clamp(12px,2.5vw,16px);cursor:pointer;box-shadow:0 8px 30px rgba(255,0,0,.55);display:flex;align-items:center;justify-content:center;text-align:center;transition:transform .08s cubic-bezier(.175,.885,.32,1.275),box-shadow .12s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative}
+#fireButton::after{content:'';position:absolute;top:-10px;left:-10px;right:-10px;bottom:-10px;border-radius:50%;pointer-events:auto}
+#fireButton:active{transform:scale(.82);box-shadow:0 4px 40px rgba(255,50,0,.8)}
+#missileButton{width:clamp(60px,11vw,75px);height:clamp(60px,11vw,75px);border-radius:50%;background:radial-gradient(circle at 35% 25%,#ffaa00,#cc5500 65%,#662200);border:3px solid #ff7700;color:#fff;font-weight:900;font-size:clamp(9px,2vw,13px);cursor:pointer;box-shadow:0 6px 25px rgba(255,140,0,.55);display:flex;align-items:center;justify-content:center;text-align:center;transition:transform .08s cubic-bezier(.175,.885,.32,1.275),box-shadow .12s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative}
+#missileButton::after{content:'';position:absolute;top:-8px;left:-8px;right:-8px;bottom:-8px;border-radius:50%;pointer-events:auto}
+#missileButton:active{transform:scale(.82);box-shadow:0 3px 35px rgba(255,180,0,.8)}
+.missile-count{color:#ffaa00;font-size:clamp(11px,2vw,15px);font-weight:700;background:rgba(0,0,0,.75);padding:3px 12px;border-radius:16px;border:1px solid rgba(255,150,0,.5);pointer-events:none;white-space:nowrap;margin-bottom:2px}
 
 /* Game Over */
 #gameOverScreen{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,12,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:40;pointer-events:none;opacity:0;transition:opacity .4s;gap:6px;padding:15px}
@@ -120,10 +122,10 @@ canvas{display:block;width:100%;height:100%;position:absolute;top:0;left:0}
 #btIndicator{position:absolute;top:4px;right:8px;z-index:50;pointer-events:none;display:none;align-items:center;gap:4px;color:#00ff88;font-size:clamp(7px,1.1vw,9px);background:rgba(0,50,0,.5);border:1px solid rgba(0,255,100,.3);border-radius:12px;padding:2px 10px}
 
 @media (max-height:450px){
-.joystick-zone{width:80px;height:80px}
-#joystickThumb{width:34px;height:34px}
-#fireButton{width:54px;height:54px;font-size:8px}
-#missileButton{width:40px;height:40px;font-size:7px}
+.joystick-zone{width:100px;height:100px}
+#joystickThumb{width:40px;height:40px}
+#fireButton{width:68px;height:68px;font-size:9px}
+#missileButton{width:50px;height:50px;font-size:8px}
 .hud-panel{padding:2px 5px;font-size:8px}
 }
 </style>
