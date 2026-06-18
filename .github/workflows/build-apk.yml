@@ -37,7 +37,7 @@ jobs:
           cordova create app com.abusalah.ababeel "أبابيل غزة"
           cd app
           cordova platform add android
-          cordova plugin add cordova-plugin-bluetooth-serial
+          cordova plugin add cordova-plugin-bluetooth-serial || true
 
       - name: Inject game files
         run: |
